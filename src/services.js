@@ -66,7 +66,13 @@ module.exports = {
             planoSelecionado.taxas = taxas;
 
             response.results = planoSelecionado;
-            response.success = planoSelecionado.taxas.length > 0;      
+            response.success = planoSelecionado.taxas.length > 0;
+
+            //Grava a consulta realizada
+            const sql = 'INSERT INTO log_consulta (data, valor) VALUES (?,?)';
+            const values = [new Date(), faturamento];
+    
+            await database.query(sql, values);
         }
 
         return res.json(response);
@@ -93,8 +99,8 @@ module.exports = {
             const contatos = results[0];
 
             if (contatos.length === 0)  {
-                const sql = 'INSERT INTO contato (nome, telefone) VALUES (?,?)';
-                const values = [nome, telefone];
+                const sql = 'INSERT INTO contato (nome, telefone, data) VALUES (?,?,?)';
+                const values = [nome, telefone, new Date()];
 
                 await database.query(sql, values);
             }
